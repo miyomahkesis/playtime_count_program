@@ -1,6 +1,5 @@
 import json
 
-
 def get_program_info() -> list:
     program_name_list = []
     file = open("search_for_programs.txt", 'r')
@@ -21,8 +20,8 @@ def write_to(file, data) -> None:
         json.dump(data, save, indent=4)
 
 TIME_INFO_DEFAULT = {}
+TIME_INFO_DEFAULT = open_to('program_time_info.json', TIME_INFO_DEFAULT)
 for title in get_program_info():
     if title[2] not in TIME_INFO_DEFAULT:
         TIME_INFO_DEFAULT[title[2]] = 0
-TIME_INFO_DEFAULT = open_to('program_time_info.json', TIME_INFO_DEFAULT)
 print(TIME_INFO_DEFAULT)
