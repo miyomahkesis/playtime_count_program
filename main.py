@@ -7,6 +7,8 @@ import time, file_management
 
 
 app_background = "#343c40"
+label_foreground = "White"
+label_background = "#242b2e"
 time_passed_in_program = {}
 time_passed_in_program = file_management.open_to('program_time_info.json', time_passed_in_program)
 
@@ -21,20 +23,20 @@ class TkinterApp(tk.Tk):
     def __init__(self) -> None:
         tk.Tk.__init__(self)
         self.title("Sonny")
-        self.geometry('420x300')
+        self.geometry('720x450')
+        self.resizable(0, 0)
         self.configure(background=app_background)
 
         self.game_name_var = tk.StringVar()
         self.game_exe_var = tk.StringVar()
 
-        self.update_game_list()
+        self.update_game_list("grid")
 
         menu = tk.Menu(self)
         menu_configure = tk.Menu(menu, tearoff=False)
         menu_configure.add_command(label='Add Game', command=lambda:self.list_game_manager("add"))
         menu_configure.add_command(label='Remove Game', command=lambda:self.list_game_manager("remove"))
         menu_help = tk.Menu(menu, tearoff=False)
-        menu_help.add_command(label='Github')
         menu_help.add_command(label='About', command=lambda:self.help_about())
         menu.add_cascade(label='Configure', menu=menu_configure)
         menu.add_cascade(label='Help', menu=menu_help)
@@ -43,9 +45,11 @@ class TkinterApp(tk.Tk):
         self.rowconfigure(0, minsize=75, weight=0)
         self.columnconfigure(1, minsize=50, weight=1)
 
-        self.pvz_playtime = tk.Label(text="Open App!!!", font=(None, 15), background=app_background, foreground="White")
+        self.pvz_playtime = tk.Label(text="Open a registered app!", font=(None, 15), background=app_background, foreground=label_foreground)
         self.pvz_playtime.grid(column=0, row=0, columnspan=3)
-    
+
+        self.update()
+
     def help_about(self):
         top= tk.Toplevel(self)
         top.geometry("250x250")
@@ -55,7 +59,6 @@ class TkinterApp(tk.Tk):
     def check_for_program(self):
         is_program_opened = False
         while True:
-            self.update_game_list()
             for programs in process_iter(): # Cycles through the processes
                 for program_name in file_management.get_program_info(): # Cycles through the programs
                     # If the program listed is found and running, it'll get the create time
@@ -71,6 +74,7 @@ class TkinterApp(tk.Tk):
                         file_management.TIME_INFO_DEFAULT[program_name[2]] += time_passed_in_program[program_name[2]]
                         file_management.write_to("program_time_info.json", file_management.TIME_INFO_DEFAULT)
                         self.pvz_playtime["text"] = (f"{program_name[0]}\n{time_format(file_management.TIME_INFO_DEFAULT[program_name[2]])}")
+                        self.update_game_list("grid")
 
     def list_game_manager(self, action):
         top = tk.Toplevel(self)
@@ -96,19 +100,51 @@ class TkinterApp(tk.Tk):
             sub_btn = tk.Button(top, text='Submit', command=lambda:self.sumbit_game_manager(top, action))
             sub_btn.grid(column=0, row=1, columnspan=2)
 
-    def update_game_list(self):
-        if len(file_management.TIME_INFO_DEFAULT) <= 0:
+    def update_game_list(self, view):
+        if len(file_management.get_program_info()) == 0:
             lo_list = tk.Label(text="No List", font=(None, 10))
             lo_list.grid(column=0, row=1, columnspan=3)
         else:
-            row_i = 0
-            for program_name in file_management.get_program_info():
-                row_i += 1
-                tk.Label(text=f"{program_name[0]}", background=app_background, foreground="White").grid(column=0, row=row_i, padx=10, sticky="w")
-                try:
-                    tk.Label(text=f"{time_format(file_management.TIME_INFO_DEFAULT[program_name[2]])}", background=app_background, foreground="White").grid(column=2, row=row_i, padx=10, sticky="e")
-                except:
-                    tk.Label(text="No Time", background=app_background, foreground="White").grid(column=2, row=row_i, padx=10, sticky="e")
+            column_max = 3
+            text_length = (720 // 25) - 3
+            game_list_column = 0
+            if view == "grid":
+                for game in file_management.get_program_info():
+                    try:
+                        frame = tk.Frame(master=self, relief="flat", background=label_background, borderwidth=1)
+                        frame.grid(row=(game_list_column // column_max)+1, column=game_list_column % column_max, padx=5, pady=5, sticky="we")
+                        self.columnconfigure(game_list_column % column_max, weight=1, minsize=75, uniform="column")
+                        if len(game[0]) >= text_length:
+                            tk.Label(master=frame, text=f"{game[0][0:text_length]}...\n{time_format(file_management.TIME_INFO_DEFAULT[game[2]])}", background=label_background, foreground=label_foreground).pack(padx=5, pady=5)
+                        else:
+                            tk.Label(master=frame, text=f"{game[0][0:text_length]}\n{time_format(file_management.TIME_INFO_DEFAULT[game[2]])}", background=label_background, foreground=label_foreground).pack(padx=5, pady=5)
+                        game_list_column += 1
+                    except:
+                        pass
+            elif view == "list":
+                viewer_pane = tk.Frame(master=self, relief=tk.RAISED, background=app_background)
+                action_pane = tk.Frame(master=self, relief=tk.RAISED, background=app_background)
+                action_pane.grid(row=1, column=1, sticky="nsew")
+                self.rowconfigure(1, weight=1)
+                self.columnconfigure(0)
+
+                canvas = tk.Canvas(viewer_pane, bg=app_background)
+                canvas.grid(row=0, column=0, sticky="news")
+
+                game_title = tk.Label(master=action_pane, text="Hello", background=label_background, foreground=label_foreground)
+                game_title.pack(padx=5, pady=5)
+
+                def list_action_pane_update(game):
+                    print(game[0])
+                    game_title["text"] = f"{game[0]}"
+                for game in file_management.get_program_info():
+                    tk.Button(canvas, text=game[0], command=lambda:list_action_pane_update(game)).grid(sticky="w")
+
+                vsb = tk.Scrollbar(viewer_pane, orient="vertical", command=canvas.yview)
+                vsb.grid(row=0, column=1, sticky='ns')
+                canvas.configure(yscrollcommand=vsb.set)
+                viewer_pane.grid(row=1, column=0, sticky="nsew")
+
     
     def sumbit_game_manager(self, window, action):
         if action == "add":
