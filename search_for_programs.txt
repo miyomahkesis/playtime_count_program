@@ -1,2 +1,0 @@
-Windows Powershell,Microsoft,OpenConsole.exe
-Bloom and Doom BETA 0.1.1.1014,Popcap,PvZBypass.exe
