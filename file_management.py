@@ -1,8 +1,9 @@
-import json, os, datetime
+import json, os
 
 app_file_path = os.getcwd()
 print("THIS IS THE APP FILE PATH -> ", app_file_path)
 
+# should've worked with json instead of txt but whatever
 def get_program_info() -> list:
     program_name_list = []
     file = open(app_file_path + "\search_for_programs.txt", 'r')
@@ -27,6 +28,5 @@ TIME_INFO_DEFAULT = open_to(app_file_path + '\program_time_info.json')
 def title_init(game):
     TIME_INFO_DEFAULT[game] = [0, 0, "Never"]
 for title in get_program_info():
-    if title[2] not in TIME_INFO_DEFAULT:
+    if f"{title[1]}/{title[2]}" not in TIME_INFO_DEFAULT:
         title_init(title[2])
-print("\033[1m  TIME INFO FILE MANAAGE -> ", TIME_INFO_DEFAULT, "\033[0m")
