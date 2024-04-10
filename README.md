@@ -12,3 +12,10 @@ That will be it! You can finally open the game and the application will count pl
 The top will show the last game played and how long you played for as well as the current time played for that game. The left panel is all the games input into the app and any you click on will bring you to a page with your play information on it. The right panel is the play information, this will show you Playtime, Times Played, and Last Played. Depending on the game, this information will never get updated. On this page you will find two buttons, the first button is to launch the game; as long as the game path is correct, launching a game will work. The second button is to remove the game from the listing, this will not delete any data about the game, it will only stop giving and getting your play information.
 
 ![alt text](docs/app_layout.png)
+
+## Updating to New Verions
+1. Download the lastest release
+2. Unzip the files
+3. Add "SonnyApp.exe" to your already existing Sonny folder
+
+This way you'll keep all of your data while being on a new version. If you update to a new version and it doesn't work like before, please let me know; use the previous version.
