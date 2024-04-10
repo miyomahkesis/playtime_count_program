@@ -13,7 +13,7 @@ The top will show the last game played and how long you played for as well as th
 
 ![alt text](docs/app_layout.png)
 
-## Updating to New Verions
+## Updating to New Versions
 1. Download the lastest release
 2. Unzip the files
 3. Add "SonnyApp.exe" to your already existing Sonny folder
