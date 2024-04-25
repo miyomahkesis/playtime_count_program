@@ -233,6 +233,7 @@ class TkinterApp(tk.Tk):
             file_management.APP_INFO_DEFAULT[self.game_name_var.get()] = {"path": self.game_path_var.get(), "exe": self.game_exe_var.get(), "dev": ""}
             file_management.title_init(self.game_path_var.get() + "/" + self.game_exe_var.get())
             file_management.write_to("program_app_info.json", file_management.APP_INFO_DEFAULT)
+            file_management.write_to("program_time_info.json", file_management.TIME_INFO_DEFAULT)
             self.update_game_list()
         if action == "remove":
             file_management.APP_INFO_DEFAULT.pop(self.game_name_var.get())
@@ -344,32 +345,33 @@ class TkinterApp(tk.Tk):
                 else:
                     game_lastplayed_var.set(f"{file_management.TIME_INFO_DEFAULT[self.game_path+'/'+self.game_exe][2]}")
 
-                TIMES_ = []
-                for i in file_management.TIME_INFO_DEFAULT:
-                    TIMES_.append(file_management.TIME_INFO_DEFAULT[i][0])
-                sort(TIMES_, len(TIMES_))
-                PLAYED_ = []
-                for i in file_management.TIME_INFO_DEFAULT:
-                    PLAYED_.append(file_management.TIME_INFO_DEFAULT[i][1])
-                sort(PLAYED_, len(PLAYED_))
-                PLAYTIME_PODIUM = {}
-                TIMESPLAYED_PODIUM = {}
-                for i in range(0, 3):
-                    for j in file_management.TIME_INFO_DEFAULT:
-                        if file_management.TIME_INFO_DEFAULT[j][0] == TIMES_[i]:
-                            PLAYTIME_PODIUM[j] = i+1
-                for i in range(0, 3):
-                    for j in file_management.TIME_INFO_DEFAULT:
-                        if file_management.TIME_INFO_DEFAULT[j][1] == PLAYED_[i]:
-                            TIMESPLAYED_PODIUM[j] = i+1
-                if self.game_path+'/'+self.game_exe in PLAYTIME_PODIUM:
-                    game_playtime_podium.set(f"♛ {ordinal_convert(PLAYTIME_PODIUM[self.game_path+'/'+self.game_exe])}")
-                else:
-                    game_playtime_podium.set("")
-                if self.game_path+'/'+self.game_exe in TIMESPLAYED_PODIUM:
-                    game_timesplayed_podium.set(f"♛ {ordinal_convert(TIMESPLAYED_PODIUM[self.game_path+'/'+self.game_exe])}")
-                else:
-                    game_timesplayed_podium.set("")
+                if len(file_management.APP_INFO_DEFAULT) >= 3:
+                    TIMES_ = []
+                    for i in file_management.TIME_INFO_DEFAULT:
+                        TIMES_.append(file_management.TIME_INFO_DEFAULT[i][0])
+                    sort(TIMES_, len(TIMES_))
+                    PLAYED_ = []
+                    for i in file_management.TIME_INFO_DEFAULT:
+                        PLAYED_.append(file_management.TIME_INFO_DEFAULT[i][1])
+                    sort(PLAYED_, len(PLAYED_))
+                    PLAYTIME_PODIUM = {}
+                    TIMESPLAYED_PODIUM = {}
+                    for i in range(0, 3):
+                        for j in file_management.TIME_INFO_DEFAULT:
+                            if file_management.TIME_INFO_DEFAULT[j][0] == TIMES_[i]:
+                                PLAYTIME_PODIUM[j] = i+1
+                    for i in range(0, 3):
+                        for j in file_management.TIME_INFO_DEFAULT:
+                            if file_management.TIME_INFO_DEFAULT[j][1] == PLAYED_[i]:
+                                TIMESPLAYED_PODIUM[j] = i+1
+                    if self.game_path+'/'+self.game_exe in PLAYTIME_PODIUM:
+                        game_playtime_podium.set(f"♛ {ordinal_convert(PLAYTIME_PODIUM[self.game_path+'/'+self.game_exe])}")
+                    else:
+                        game_playtime_podium.set("")
+                    if self.game_path+'/'+self.game_exe in TIMESPLAYED_PODIUM:
+                        game_timesplayed_podium.set(f"♛ {ordinal_convert(TIMESPLAYED_PODIUM[self.game_path+'/'+self.game_exe])}")
+                    else:
+                        game_timesplayed_podium.set("")
             list_action_pane_update(SORTED_APP_INFO[self.current_game_index], self.current_game_index)
 
             # ACTION PANE FOR GAME BUTTONS ----------------------------------
